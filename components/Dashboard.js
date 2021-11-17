@@ -19,7 +19,7 @@ import {
   } from 'react-native';
   import Login from '../components/Login';
  import Icon from 'react-native-vector-icons/dist/FontAwesome';
-
+ import AsyncStorage from '@react-native-async-storage/async-storage';
  import service from '../api/service';
  
 
@@ -37,6 +37,20 @@ export default class Dashboard extends Component {
     };
   
   }
+
+
+  static navigationOptions = ({navigation}) => ({
+   
+    
+    headerRight: (
+      <View >
+         <TouchableOpacity  
+         onPress={navigation.getParam('Logout')}>
+        <Icon  name="sign-out" size={32} color="black"  />
+        </TouchableOpacity>
+         </View>
+    )
+  });
 
   
 
@@ -73,12 +87,16 @@ this.setState({movieList:filteredName})
     componentDidMount(){
 
 
+      this.props.navigation.setParams({ Logout: this.Logout});
+
       this.backHandler = BackHandler.addEventListener(
         "hardwareBackPress",
         this.handleBackButton
       );
 
      
+
+      
       this.MovieList();
        // this.getToken();
         //this.getData();
@@ -165,11 +183,19 @@ this.setState({movieList:filteredName})
               style: 'cancel'
           }, {
               text: 'OK',
-              onPress: () => BackHandler.exitApp()
+              onPress: () => this.LocalStorage()
           }, ], {
               cancelable: false
           }
        )
+
+      }
+
+
+      LocalStorage = async() => {
+          AsyncStorage.clear();
+
+          this.props.navigation.navigate('Login');
 
       }
 
